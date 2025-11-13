@@ -1,0 +1,20 @@
+# Use the official Node.js image
+FROM node:20.9.0
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json first
+COPY package*.json ./
+
+# Install dependencies (this will install jwt-decode if it's in package.json)
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 4000
+
+# Start the application
+CMD ["npm", "run", "dev"]
