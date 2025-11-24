@@ -1,36 +1,32 @@
-version: '3.8'
-services:
-  app:
-    build: .
-    ports:
-      - "3005:3005"  # Maps host port 3005 to container port 3005
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/mydb  # Use internal port 5432
-      - JWT_SECRET=mysecret
-      - NEXTAUTH_URL=http://196.190.220.43:3005  # Correct external URL
-    depends_on:
-      - db  # Wait for db to start
-    command: >
-      sh -c "until npx prisma migrate dev --name init; do
-        echo 'Database not ready yet! Retrying in 5 seconds...';
-        sleep 5;
-      done && npm start"  # Run migrations on successful connection
+version: "3.9"
 
+services:
   db:
-    image: postgres:latest
+    image: postgres:18
+    container_name: my_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     ports:
-      - "5434:5432"  # Exposing port 5434 on host to internal port 5432
+      - "5432:5432"
     volumes:
-      -  pgdata:/var/lib/postgresql # Persistent storage for PostgreSQL
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user"]  # Check if the database is ready
-      interval: 5s  # Frequency of health checks
-      timeout: 5s  # Timeout for each check
-      retries: 3    # Number of retries before considering the service unhealthy
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: my_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "3005:3005"
+    command: >
+      sh -c "npx prisma migrate deploy && node server.js"
+      # Replace node server.js with your actual start command
 
 volumes:
-  pgdata:
+  db_data:
