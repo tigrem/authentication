@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   my-postgres:
     image: postgres:18
@@ -14,9 +12,9 @@ services:
     volumes:
       - postgres_data_new:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myuser"]
-      interval: 5s
-      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 10s
+      retries: 15
       timeout: 5s
 
   my-app:
