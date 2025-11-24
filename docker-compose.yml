@@ -29,8 +29,7 @@ services:
     depends_on:
       my-postgres:
         condition: service_healthy
-    command: >
-      sh -c "echo 'Waiting for Postgres...' && npm run dev"
+    command: sh -c "echo 'Waiting for Postgres...' && npm run dev"
 
 volumes:
   postgres_data_new:
