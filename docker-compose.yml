@@ -1,4 +1,4 @@
-version: "3.9"  # keep this, no errors in modern Docker Compose
+version: "3.9"
 
 services:
   my-postgres:
@@ -12,11 +12,11 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql   # updated mount
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U myuser"]
       interval: 5s
-      retries: 5
+      retries: 10
       timeout: 5s
 
   my-app:
@@ -29,9 +29,10 @@ services:
     ports:
       - "3005:3005"
     depends_on:
-      - my-postgres
+      my-postgres:
+        condition: service_healthy
     command: >
-      sh -c "echo 'Waiting for Postgres...' && sleep 15 && npm run dev"
+      sh -c "echo 'Waiting for Postgres...' && npm run dev"
 
 volumes:
-  postgres_data:
+  postgres_data_new:
