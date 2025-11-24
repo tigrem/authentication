@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient({
-  // Pass the database URL at runtime
   datasources: {
     db: { url: process.env.DATABASE_URL },
   },
