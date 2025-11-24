@@ -21,15 +21,13 @@ services:
     build: .
     container_name: my-app
     restart: always
-    environment:
-      DATABASE_URL: postgres://myuser:mypassword@my-postgres:5432/mydb?schema=public
-      PORT: 3005
+    env_file: .env           # ✅ load DATABASE_URL, PORT, NODE_ENV
     ports:
       - "3005:3005"
     depends_on:
       my-postgres:
         condition: service_healthy
-    command: npm run dev
+    command: sh -c "npx prisma generate && npm run dev"  # ✅ ensure Prisma client is generated at startup
 
 volumes:
   postgres_data_v4:
