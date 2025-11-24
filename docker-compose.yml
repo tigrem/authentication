@@ -1,10 +1,10 @@
-version: "3.9"
+version: "3.9"  # keep this, no errors in modern Docker Compose
 
 services:
-  db:
+  my-postgres:
     image: postgres:18
-    container_name: my_postgres
-    restart: unless-stopped
+    container_name: my-postgres
+    restart: always
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
@@ -12,29 +12,26 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
 
-  app:
+  my-app:
     build: .
-    container_name: my_app
-    restart: unless-stopped
-    env_file:
-      - .env
-    depends_on:
-      - db
+    container_name: my-app
+    restart: always
+    environment:
+      DATABASE_URL: postgres://myuser:mypassword@my-postgres:5432/mydb
+      PORT: 4000
     ports:
-      - "3005:3005"
+      - "4000:4000"
+    depends_on:
+      - my-postgres
     command: >
-      sh -c "
-      echo 'Waiting for Postgres...';
-      until pg_isready -h db -p 5432 -U myuser; do
-        sleep 2;
-      done;
-      echo 'Postgres is ready, running migrations...';
-      npx prisma migrate deploy;
-      echo 'Starting app...';
-      node server.js
-      "
-      
+      sh -c "echo 'Waiting for Postgres...' && sleep 15 && npm run dev"
+
 volumes:
-  db_data:
+  postgres_data:
