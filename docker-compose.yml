@@ -25,9 +25,9 @@ services:
     restart: always
     environment:
       DATABASE_URL: postgres://myuser:mypassword@my-postgres:5432/mydb
-      PORT: 3500
+      PORT: 3005
     ports:
-      - "3500:3500"
+      - "3005:3005"
     depends_on:
       - my-postgres
     command: >
