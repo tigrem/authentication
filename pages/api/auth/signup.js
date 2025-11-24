@@ -1,12 +1,9 @@
-// pages/api/auth/signup.js
-import { hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcryptjs';
 
-// Prisma 7: connection string directly in the client
+// Direct database URL, no adapter
 const prisma = new PrismaClient({
-  adapter: {
-    connectionString: "postgresql://myuser:mypassword@my-postgres:5432/mydb?schema=public",
-  },
+  connectionString: "postgresql://myuser:mypassword@my-postgres:5432/mydb?schema=public",
 });
 
 export default async function handler(req, res) {
