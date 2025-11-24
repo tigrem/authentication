@@ -1,9 +1,10 @@
-import { hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient({
-  adapter: {
-    connectionString: process.env.DATABASE_URL, // must be set in Docker or .env
+  // Pass the database URL at runtime
+  datasources: {
+    db: { url: process.env.DATABASE_URL },
   },
 });
 
@@ -20,7 +21,6 @@ export default async function handler(req, res) {
       const user = await prisma.user.create({
         data: { email, password: hashedPassword },
       });
-
       res.status(201).json(user);
     } catch (error) {
       console.error(error);
