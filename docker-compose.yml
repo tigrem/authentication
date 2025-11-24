@@ -25,8 +25,16 @@ services:
     ports:
       - "3005:3005"
     command: >
-      sh -c "npx prisma migrate deploy && node server.js"
-      # Replace node server.js with your actual start command
-
+      sh -c "
+      echo 'Waiting for Postgres...';
+      until pg_isready -h db -p 5432 -U myuser; do
+        sleep 2;
+      done;
+      echo 'Postgres is ready, running migrations...';
+      npx prisma migrate deploy;
+      echo 'Starting app...';
+      node server.js
+      "
+      
 volumes:
   db_data:
