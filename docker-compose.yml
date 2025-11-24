@@ -29,8 +29,7 @@ services:
     depends_on:
       my-postgres:
         condition: service_healthy
-    command: >
-      sh -c "until pg_isready -h my-postgres -U myuser -d mydb; do echo 'Waiting for Postgres...'; sleep 2; done && npm run dev"
+    command: npm run dev
 
 volumes:
   postgres_data_v4:
