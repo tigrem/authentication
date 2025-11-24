@@ -22,7 +22,7 @@ services:
     container_name: my-app
     restart: always
     environment:
-      DATABASE_URL: postgres://myuser:mypassword@my-postgres:5432/mydb
+      DATABASE_URL: postgres://myuser:mypassword@my-postgres:5432/mydb?schema=public
       PORT: 3005
     ports:
       - "3005:3005"
