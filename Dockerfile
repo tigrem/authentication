@@ -16,4 +16,5 @@ COPY . .
 # Expose the port your app runs on
 EXPOSE 3005
 
-CMD npx prisma generate && npm run dev
+# Generate Prisma client at runtime and start the app
+CMD ["sh", "-c", "npx prisma generate && npm run dev"]
