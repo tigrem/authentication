@@ -12,13 +12,12 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - postgres_data_new:/var/lib/postgresql  # recommended for Postgres 18+
+      - postgres_data_new:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U myuser"]
       interval: 5s
       retries: 10
       timeout: 5s
-      start_period: 5s  # optional, helps with initial DB startup delay
 
   my-app:
     build: .
