@@ -1,15 +1,20 @@
 version: '3.8'
-
 services:
   app:
     build: .
     ports:
-      - "4000:4000"
+      - "3005:3005"  # Maps host port 3005 to container port 3005
     environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/mydb
+      - DATABASE_URL=postgresql://user:password@db:5432/mydb  # Use internal port 5432
       - JWT_SECRET=mysecret
+      - NEXTAUTH_URL=http://196.190.220.43:3005  # Correct external URL
     depends_on:
-      - db
+      - db  # Wait for db to start
+    command: >
+      sh -c "until npx prisma migrate dev --name init; do
+        echo 'Database not ready yet! Retrying in 5 seconds...';
+        sleep 5;
+      done && npm start"  # Run migrations on successful connection
 
   db:
     image: postgres:latest
@@ -18,9 +23,14 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     ports:
-      - "5432:5432"
+      - "5434:5432"  # Exposing port 5434 on host to internal port 5432
     volumes:
-      - pgdata:/var/lib/postgresql  # Make sure to use this line
+      -  pgdata:/var/lib/postgresql # Persistent storage for PostgreSQL
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]  # Check if the database is ready
+      interval: 5s  # Frequency of health checks
+      timeout: 5s  # Timeout for each check
+      retries: 3    # Number of retries before considering the service unhealthy
 
 volumes:
   pgdata:
