@@ -13,11 +13,7 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
-# Generate Prisma client (required before starting the app)
-RUN npx prisma generate
-
 # Expose the port your app runs on
 EXPOSE 3005
 
-# Start the application
-CMD ["npm", "run", "dev"]
+CMD npx prisma generate && npm run dev
