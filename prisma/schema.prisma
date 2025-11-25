@@ -1,10 +1,13 @@
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL") 
+  // Keep this line commented out for Prisma v7
+  //url       = env("DATABASE_URL") 
 }
 
 generator client {
   provider = "prisma-client-js"
+  // ADD THIS LINE: Force Prisma to include the correct Linux engine binary
+  binaryTargets = ["native", "debian-openssl-3.0.x"] 
 }
 
 // ... your models ...
