@@ -1,21 +1,23 @@
-# Use the specified Node.js version
 FROM node:20.9.0
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package files and install dependencies
-# This leverages Docker layer caching
+# --- New Step to install wait-for-it ---
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    netcat \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+# --------------------------------------
+
 COPY package*.json ./
 RUN npm install
 
-# Copy all application code into the container
 COPY . .
 
-# Expose the port the application runs on
 EXPOSE 3005
 
-# Define the command to run when the container starts.
-# NOTE: This CMD is currently OVERRIDDEN by the 'command' in your 
-# docker-compose.yml, which is necessary to include the 'sleep' for stability.
-CMD ["sh", "-c", "npx prisma generate && npm run dev"]
+# CMD is no longer strictly used, but kept simple
+CMD ["npm", "run", "dev"]
