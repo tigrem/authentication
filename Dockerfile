@@ -24,10 +24,10 @@ RUN npm install @prisma/config
 # This installs Prisma v7.0.0 based on your updated package.json
 RUN npm install
 
-# Copy all source files (schema.prisma and prisma.config.ts)
+# Copy all source files (schema.prisma, prisma.config.ts, etc.)
 COPY . .
 
-# Explicitly run prisma generate to ensure the client files are created and copied
+# CRITICAL: This explicitly runs generate, now including the "debian-openssl-3.0.x" binary
 RUN npx prisma generate
 
 EXPOSE 3005
