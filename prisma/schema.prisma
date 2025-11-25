@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") / <-- THIS LINE IS REQUIRED FOR PRISMA 4.16.2
+  url      = env("DATABASE_URL") 
 }
 
 generator client {
