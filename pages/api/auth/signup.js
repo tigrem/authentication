@@ -1,11 +1,27 @@
 // pages/api/auth/signup.js
+
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
-// Initialize Prisma Client.
-// It will automatically connect using the DATABASE_URL environment variable
-// defined in your docker-compose.yml, which is now referenced in schema.prisma.
-const prisma = new PrismaClient();
+// --- START: SINGLETON IMPLEMENTATION ---
+// This prevents multiple PrismaClient instances from being created during 
+// development (hot module reloading) which causes the "TypeError: Cannot read properties of undefined..." error.
+
+let prisma;
+
+if (process.env.NODE_ENV === 'production') {
+  // In production, instantiate normally
+  prisma = new PrismaClient();
+} else {
+  // In development, use a global variable to persist the instance
+  if (!global.prisma) {
+    global.prisma = new PrismaClient();
+  }
+  prisma = global.prisma;
+}
+
+// --- END: SINGLETON IMPLEMENTATION ---
+
 
 export default async function handler(req, res) {
   // 1. Check HTTP Method
