@@ -24,7 +24,7 @@ services:
    container_name: my-app
    restart: always
    environment:
-     DATABASE_URL: "postgresql://myuser:mypassword@my-postgres:5432/mydb?schema=public"
+     DATABASE_URL: "postgresql://myuser:mypassword@196.190.220.43:5432/mydb?schema=public"
      PORT: 3005
      NODE_ENV: development
    ports:
@@ -33,7 +33,7 @@ services:
      my-postgres:
        condition: service_healthy
    # CRITICAL FIX: Use the dedicated wait-for-it script to ensure the port is open
-   command: sh -c "/usr/local/bin/wait-for-it.sh my-postgres:5432 --timeout=60 --strict -- \
+   command: sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5432 --timeout=60 --strict -- \
              npx prisma generate && npm run dev"
 
 volumes:
