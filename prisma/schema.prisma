@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
-  // REMOVE: url = env("DATABASE_URL") 
+  // Add this line back for Prisma v4.16.2
+  url      = env("DATABASE_URL") 
 }
 
 generator client {
