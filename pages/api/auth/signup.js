@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma'; // Adjust the path as necessary
+import prisma from '../../../lib/prisma'; // Adjust the path based on your structure
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
