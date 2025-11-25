@@ -1,12 +1,10 @@
 datasource db {
   provider = "postgresql"
-  // THIS LINE MUST BE REMOVED: url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // <-- THIS LINE IS REQUIRED FOR PRISMA 4.16.2
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-// ... your model definition
-}
+// ... your models ...
