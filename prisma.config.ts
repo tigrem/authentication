@@ -1,9 +1,11 @@
-// prisma.config.ts
-import { PrismaClient } from '@prisma/client';
+// prisma.config.ts (in your project root)
 
-const prisma = new PrismaClient({
-  adapter: 'postgresql',       // use direct DB connection
-  datasource: process.env.DATABASE_URL,  // make sure this env var exists
+import { defineConfig } from "@prisma/config";
+
+export default defineConfig({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
-
-export default prisma;
