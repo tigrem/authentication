@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  // This line must remain commented out for Prisma v7 configuration
+ 
   //url       = env("DATABASE_URL") 
 }
 
