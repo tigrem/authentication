@@ -15,7 +15,7 @@ export default function SignupPage() {
     });
     const data = await res.json();
     if (res.ok) {
-      alert('Signup successful! Please login.');
+      alert('Signup successful! Please login.'); 
       router.push('/login'); // redirect to login
     } else {
       alert(data.message);
