@@ -1,27 +1,9 @@
 // pages/api/auth/signup.js
 
-import { PrismaClient } from '@prisma/client';
+// IMPORTANT: We now import the single Prisma instance from the utility file.
+// The Singleton logic (new PrismaClient()) is now in lib/prisma.js
+import prisma from '../../../lib/prisma'; 
 import { hash } from 'bcryptjs';
-
-// --- START: ROBUST SINGLETON IMPLEMENTATION (Fixes TypeError) ---
-
-let prisma;
-
-// 1. Check if running in production or development
-if (process.env.NODE_ENV === 'production') {
-  // Production environment: Always create a new instance (no HMR concerns)
-  prisma = new PrismaClient();
-} else {
-  // Development environment (next dev): Use a global variable to persist the instance
-  // This prevents the "Cannot read properties of undefined" error caused by Next.js Hot Module Reloading.
-  if (!global._prisma) {
-    global._prisma = new PrismaClient();
-  }
-  prisma = global._prisma;
-}
-
-// --- END: ROBUST SINGLETON IMPLEMENTATION ---
-
 
 export default async function handler(req, res) {
   // 1. Check HTTP Method
