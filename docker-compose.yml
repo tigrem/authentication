@@ -20,23 +20,21 @@ services:
       timeout: 5s
 
   my-app:
-    build: .
-    container_name: my-app
-    restart: always
-    environment:
-      # This is the connection string used by Prisma
-      DATABASE_URL: "postgresql://myuser:mypassword@my-postgres:5432/mydb?schema=public"
-      PORT: 3005
-      NODE_ENV: development
-    ports:
-      - "3005:3005"
-    depends_on:
-      my-postgres:
-        # Ensures my-postgres reports 'healthy' before starting my-app
-        condition: service_healthy
-    # CRITICAL FIX: Wait for 15 seconds after Postgres is 'healthy' before starting
-    # This prevents the "Can't reach database server" error during initial connection.
-    command: sh -c "sleep 15 && npx prisma generate && npm run dev"
+   build: .
+   container_name: my-app
+   restart: always
+   environment:
+     DATABASE_URL: "postgresql://myuser:mypassword@my-postgres:5432/mydb?schema=public"
+     PORT: 3005
+     NODE_ENV: development
+   ports:
+     - "3005:3005"
+   depends_on:
+     my-postgres:
+       condition: service_healthy
+   # CRITICAL FIX: Use the dedicated wait-for-it script to ensure the port is open
+   command: sh -c "/usr/local/bin/wait-for-it.sh my-postgres:5432 --timeout=30 --strict -- \
+             npx prisma generate && npm run dev"
 
 volumes:
   postgres_data_v4:
