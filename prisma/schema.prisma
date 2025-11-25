@@ -1,7 +1,6 @@
 datasource db {
   provider = "postgresql"
-  // Add this line back for Prisma v4.16.2
-  url      = env("DATABASE_URL") 
+  // THIS LINE MUST BE REMOVED: url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -9,7 +8,5 @@ generator client {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  password  String
+// ... your model definition
 }
