@@ -1,5 +1,5 @@
-# --- STAGE 1: Dependency Installation & Prisma Generation ---
-# This stage installs all dependencies and generates the Prisma client.
+# --- FORCE REFRESH: Cache-busting comment to force Dokploy to clone the latest repo. ---
+# Prisma 7 Fix
 FROM node:20 as dependencies
 
 # Set working directory
@@ -39,7 +39,6 @@ COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 COPY . .
 # Explicitly force-copying the prisma directory
 COPY prisma ./prisma
-# REMOVED: COPY prisma.config.mjs ./  <-- This line is gone!
 
 # Run Prisma generation. This step should now use default settings and succeed.
 RUN npx prisma generate
