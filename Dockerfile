@@ -53,13 +53,3 @@ EXPOSE 3005
 # Start the application.
 CMD sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
     npm run dev"
-
-
-### **Action Summary**
-
-Please ensure you have performed these critical steps before deploying this Dockerfile:
-
-1.  **Deleted** the old `prisma.config.ts`.
-2.  **Created** `prisma.config.js` in your root directory.
-3.  **Replaced** your `Dockerfile` with the clean content above.
-4.  **Commit, Push, and Redeploy.**
