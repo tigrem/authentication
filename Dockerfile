@@ -23,7 +23,6 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # --- STAGE 2: Build & Runtime Environment ---
-# This stage uses a clean image and only copies necessary files for the final runtime.
 FROM node:20
 
 # Set working directory
@@ -36,20 +35,21 @@ COPY --from=dependencies /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for-i
 COPY package.json package-lock.json ./
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 
-# COPY APPLICATION SOURCE CODE
-# Copy all general files (this includes lib/prisma.js)
+# COPY APPLICATION SOURCE CODE (lib/prisma.js, schema.prisma, prisma.config.ts)
 COPY . .
-
-# 🚨 CRITICAL CACHE BUSTER: Force the latest prisma files to be copied.
-# This ensures npx prisma generate uses the updated schema.prisma (URL-less)
-# and the new prisma.config.ts by overriding any stale files from previous layers.
+# Explicitly force-copying the prisma configuration files to bypass cache
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 
-# Run Prisma generation. This step requires the updated schema.prisma and prisma.config.ts.
+# 🚨 FIX: Install ts-node and typescript globally in the runtime stage
+# This is required to allow 'npx prisma generate' to parse the TypeScript 'prisma.config.ts' file
+# and should resolve the "Failed to parse syntax" error (P1012 after initial fix).
+RUN npm install -g typescript ts-node 
+
+# Run Prisma generation. This step should now succeed.
 RUN npx prisma generate
 
-# CRITICAL FIX: Delete the Next.js cache directory to solve the "__internal" TypeError
+# CRITICAL FIX: Delete the Next.js cache directory.
 RUN rm -rf .next/cache
 
 EXPOSE 3005
@@ -57,3 +57,12 @@ EXPOSE 3005
 # Start the application.
 CMD sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
     npm run dev"
+
+
+### Instructions
+
+1.  **Copy** the entire content block above.
+2.  **Paste** it into your `Dockerfile`, replacing the previous content.
+3.  **Commit, Push, and Redeploy** on Dokploy.
+
+This final modification should address the "Failed to parse syntax" error and allow your build to complete.
