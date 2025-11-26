@@ -1,14 +1,12 @@
 datasource db {
   provider = "postgresql"
- 
-  //url       = env("DATABASE_URL") 
+  // Configuration is now handled in prisma.config.ts
 }
 
 generator client {
   provider = "prisma-client-js"
-  // CRITICAL FIX: Add exhaustive binary targets for Docker/Linux environments
-  // This forces Prisma to download and bundle the correct native query engine file.
-  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl", "rhel-openssl-3.0.x"] 
+  // Keep the necessary binary targets for Docker/Linux environments
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl", "rhel-openssl-3.0.x"]
 }
 
 model User {
