@@ -35,14 +35,13 @@ COPY --from=dependencies /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for-i
 COPY package.json package-lock.json ./
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 
-# COPY APPLICATION SOURCE CODE (lib/prisma.js, schema.prisma, prisma.config.mjs)
+# COPY APPLICATION SOURCE CODE (lib/prisma.js, schema.prisma)
 COPY . .
-# Explicitly force-copying the prisma configuration files to bypass cache
+# Explicitly force-copying the prisma directory
 COPY prisma ./prisma
-# Updated to look for the new .mjs file
-COPY prisma.config.mjs ./
+# REMOVED: COPY prisma.config.mjs ./  <-- This line is gone!
 
-# Run Prisma generation. This step should now succeed.
+# Run Prisma generation. This step should now use default settings and succeed.
 RUN npx prisma generate
 
 # CRITICAL FIX: Delete the Next.js cache directory.
