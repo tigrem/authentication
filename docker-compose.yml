@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  my-postgres:
+  my-postgres_db:
     image: postgres:15
-    container_name: my-postgres
+    container_name: my-postgres_db
     restart: always
     environment:
       POSTGRES_USER: myuser
@@ -19,9 +19,9 @@ services:
       retries: 15
       timeout: 5s
 
-  my-app:
+  my-app_one:
    build: .
-   container_name: my-app
+   container_name: my-app_one
    restart: always
    environment:
      DATABASE_URL: "postgresql://myuser:mypassword@196.190.220.43:5434/mydb?schema=public"
@@ -30,7 +30,7 @@ services:
    ports:
      - "3005:3005"
    depends_on:
-     my-postgres:
+     my-postgres_db:
        condition: service_healthy
    # CRITICAL FIX: Use the dedicated wait-for-it script to ensure the port is open
    command: sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
