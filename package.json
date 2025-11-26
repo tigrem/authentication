@@ -6,15 +6,16 @@
     "dev": "next dev -H 0.0.0.0 -p 3005",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3005",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall-cache-fix": "echo 'Cache Fix Date: 2025-11-26-FINAL'" 
   },
   "dependencies": {
-    "@prisma/client": "7.0.0", 
+    "@prisma/client": "7.0.0",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "next": "16.0.2",
-    "prisma": "7.0.0", 
+    "prisma": "7.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
@@ -28,7 +29,7 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "@prisma/config": "7.0.0",
-    "ts-node": "^10.9.2" 
+    "ts-node": "^10.9.2"
   },
   "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
   "main": "index.js",
