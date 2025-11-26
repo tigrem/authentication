@@ -36,20 +36,24 @@ COPY --from=dependencies /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for-i
 COPY package.json package-lock.json ./
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 
-# Copy application source code (including lib/prisma.js and schema.prisma)
+# COPY APPLICATION SOURCE CODE
+# Copy all general files (this includes lib/prisma.js)
 COPY . .
 
-# Run Prisma generation to ensure the Query Engine binaries are correctly placed.
+# 🚨 CRITICAL CACHE BUSTER: Force the latest prisma files to be copied.
+# This ensures npx prisma generate uses the updated schema.prisma (URL-less)
+# and the new prisma.config.ts by overriding any stale files from previous layers.
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+
+# Run Prisma generation. This step requires the updated schema.prisma and prisma.config.ts.
 RUN npx prisma generate
 
-# CRITICAL FIX: Delete the Next.js cache directory.
-# This step is essential to resolve the "Cannot read properties of undefined (reading '__internal')"
-# TypeError by forcing a fresh start of the Next.js development server.
+# CRITICAL FIX: Delete the Next.js cache directory to solve the "__internal" TypeError
 RUN rm -rf .next/cache
 
 EXPOSE 3005
 
-# Start the application. Using the external IP/Port is the necessary workaround
-# since internal Dokploy networking is failing.
+# Start the application.
 CMD sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
     npm run dev"
