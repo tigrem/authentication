@@ -1,7 +1,6 @@
 datasource db {
   provider = "postgresql"
-  // Reverting to the configuration that works for the CLI build step
-  url      = env("DATABASE_URL") 
+  // NOTE: The 'url' property MUST be removed for Prisma 7 compatibility.
 }
 
 generator client {
