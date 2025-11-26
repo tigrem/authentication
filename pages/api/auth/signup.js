@@ -1,22 +1,35 @@
-import prisma from '../../../lib/prisma'; // Adjust the path based on your structure
+import prisma from '../../../lib/prisma'; // Assumes lib is one directory up from 'api'
+import bcrypt from 'bcryptjs';
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { name, email } = req.body;
-    try {
-      const newUser = await prisma.user.create({
-        data: {
-          name,
-          email,
-        },
-      });
-      res.status(201).json(newUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'User creation failed' });
+export default async function handle(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email: email,
+        password: hashedPassword,
+      },
+    });
+
+    return res.status(201).json({ message: 'User created successfully', userId: user.id });
+
+  } catch (error) {
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+      return res.status(409).json({ message: 'A user with this email already exists.' });
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    
+    console.error("Signup API Error:", error);
+    return res.status(500).json({ message: 'An internal error occurred during signup.' });
   }
 }
