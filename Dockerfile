@@ -41,9 +41,7 @@ COPY . .
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 
-# 🚨 FIX: Install ts-node and typescript globally in the runtime stage
-# This is required to allow 'npx prisma generate' to parse the TypeScript 'prisma.config.ts' file
-# and should resolve the "Failed to parse syntax" error (P1012 after initial fix).
+# FIX: Install ts-node and typescript globally in the runtime stage to parse prisma.config.ts
 RUN npm install -g typescript ts-node 
 
 # Run Prisma generation. This step should now succeed.
@@ -57,12 +55,3 @@ EXPOSE 3005
 # Start the application.
 CMD sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
     npm run dev"
-
-
-### Instructions
-
-1.  **Copy** the entire content block above.
-2.  **Paste** it into your `Dockerfile`, replacing the previous content.
-3.  **Commit, Push, and Redeploy** on Dokploy.
-
-This final modification should address the "Failed to parse syntax" error and allow your build to complete.
