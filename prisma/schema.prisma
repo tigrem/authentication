@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
-  // Configuration is now handled in prisma.config.ts
+  // Reverting to the configuration that works for the CLI build step
+  url      = env("DATABASE_URL") 
 }
 
 generator client {
