@@ -1,12 +1,16 @@
-import 'dotenv/config';
-import { defineConfig } from 'prisma/config';
+import { PrismaConfig } from '@prisma/client/runtime/library'
 
-export default defineConfig({
-  schema: 'prisma/schema.prisma',
-  datasource: {
-    url: process.env.DATABASE_URL,
-  },
-  migrations: {
-    path: 'prisma/migrations',
-  },
-});
+const config: PrismaConfig = {
+  // Define the connection string for the migrate command and direct database access
+  datasources: [
+    {
+      name: 'db',
+      url: process.env.DATABASE_URL!, // Use the existing environment variable
+      provider: 'postgresql',
+    },
+  ],
+  // Add other global configurations here if needed
+  log: ['info', 'warn', 'error'],
+}
+
+export default config
