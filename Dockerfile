@@ -35,16 +35,14 @@ COPY --from=dependencies /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for-i
 COPY package.json package-lock.json ./
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 
-# COPY APPLICATION SOURCE CODE (lib/prisma.js, schema.prisma, prisma.config.ts)
+# COPY APPLICATION SOURCE CODE (lib/prisma.js, schema.prisma, prisma.config.js)
 COPY . .
 # Explicitly force-copying the prisma configuration files to bypass cache
 COPY prisma ./prisma
-COPY prisma.config.ts ./
+# Updated to look for the new .js file
+COPY prisma.config.js ./
 
-# FIX: Install ts-node and typescript globally in the runtime stage to parse prisma.config.ts
-RUN npm install -g typescript ts-node 
-
-# Run Prisma generation. This step should now succeed.
+# Run Prisma generation. This step should now succeed using the plain JS config.
 RUN npx prisma generate
 
 # CRITICAL FIX: Delete the Next.js cache directory.
@@ -55,3 +53,13 @@ EXPOSE 3005
 # Start the application.
 CMD sh -c "/usr/local/bin/wait-for-it.sh 196.190.220.43:5434 --timeout=60 --strict -- \
     npm run dev"
+
+
+### **Action Summary**
+
+Please ensure you have performed these critical steps before deploying this Dockerfile:
+
+1.  **Deleted** the old `prisma.config.ts`.
+2.  **Created** `prisma.config.js` in your root directory.
+3.  **Replaced** your `Dockerfile` with the clean content above.
+4.  **Commit, Push, and Redeploy.**
