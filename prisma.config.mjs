@@ -1,4 +1,4 @@
-// This configuration file is now plain JavaScript to avoid execution errors in Docker.
+// This configuration file uses ES Modules (.mjs) to ensure proper parsing by Prisma 7.
 
 /** @type {import('@prisma/client/runtime/library').PrismaConfig} */
 const config = {
@@ -14,4 +14,5 @@ const config = {
   log: ['info', 'warn', 'error'],
 }
 
-module.exports = config
+// Use export default for ES Modules
+export default config
